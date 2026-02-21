@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: UID Slug 恒链器
- * Description: 自动将文章（post）的 slug 设置为 8 位 UID（必须同时包含大写与小写字母），并保证唯一。仅在“首次发布”时锁定，后续编辑不再改。
+ * Description: 自动将文章（post）的 slug 设置为 8 位 UID（仅小写字母），并保证唯一。仅在“首次发布”时锁定，后续编辑不再改。
  * Version: 1.0.0
  * Author: Alfred
  * License: GPL-2.0+
@@ -12,34 +12,19 @@ if (!defined('ABSPATH')) {
 }
 
 function uid_slug_is_uid($slug) {
-    return (bool) preg_match('/^(?=.*[a-z])(?=.*[A-Z])[A-Za-z0-9]{8}$/', (string) $slug);
+    return (bool) preg_match('/^[a-z]{8}$/', (string) $slug);
 }
 
 function uid_slug_random_strict($length = 8) {
     $lower = 'abcdefghijklmnopqrstuvwxyz';
-    $upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $all = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    if ($length < 2) {
-        $length = 2;
+    if ($length < 1) {
+        $length = 1;
     }
 
-    // 至少一个小写 + 一个大写
-    $chars = [
-        $lower[random_int(0, strlen($lower) - 1)],
-        $upper[random_int(0, strlen($upper) - 1)],
-    ];
-
-    for ($i = 2; $i < $length; $i++) {
-        $chars[] = $all[random_int(0, strlen($all) - 1)];
-    }
-
-    // 打乱顺序
-    for ($i = count($chars) - 1; $i > 0; $i--) {
-        $j = random_int(0, $i);
-        $tmp = $chars[$i];
-        $chars[$i] = $chars[$j];
-        $chars[$j] = $tmp;
+    $chars = [];
+    for ($i = 0; $i < $length; $i++) {
+        $chars[] = $lower[random_int(0, strlen($lower) - 1)];
     }
 
     return implode('', $chars);
@@ -54,7 +39,7 @@ function uid_slug_generate_unique($post_id = 0, $post_status = 'publish', $post_
         }
     }
 
-    // 回退：保证格式正确后再交给 WP 去重
+    // 回退：增加长度后再交给 WP 去重
     $fallback = uid_slug_random_strict(10);
     return wp_unique_post_slug($fallback, $post_id, $post_status, $post_type, $post_parent);
 }
