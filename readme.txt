@@ -6,11 +6,11 @@ Tested up to: 6.7
 Stable tag: 1.0.0
 License: GPLv2 or later
 
-将 WordPress 文章（post）的 slug 自动设置为 8 位 UID，仅使用小写字母。
+将 WordPress 文章（post）的 slug 自动设置为 8 位 UID，仅使用小写字母和数字，不含大写字母。
 
 == 功能 ==
 - 仅在文章“首次发布”时自动生成 UID slug
-- UID 规则：8 位，仅小写字母
+- UID 规则：8 位，仅小写字母和数字，不含大写字母
 - 后续编辑不会再自动改 slug（锁定）
 - 使用 wp_unique_post_slug 处理唯一性，避免冲突
 - 不影响页面（page）和其他内容类型

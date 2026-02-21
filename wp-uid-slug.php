@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: UID Slug 恒链器
- * Description: 自动将文章（post）的 slug 设置为 8 位 UID（仅小写字母），并保证唯一。仅在“首次发布”时锁定，后续编辑不再改。
+ * Description: 自动将文章（post）的 slug 设置为 8 位 UID（仅小写字母和数字，不含大写字母），并保证唯一。仅在“首次发布”时锁定，后续编辑不再改。
  * Version: 1.0.0
  * Author: Alfred
  * License: GPL-2.0+
@@ -12,11 +12,11 @@ if (!defined('ABSPATH')) {
 }
 
 function uid_slug_is_uid($slug) {
-    return (bool) preg_match('/^[a-z]{8}$/', (string) $slug);
+    return (bool) preg_match('/^[a-z0-9]{8}$/', (string) $slug);
 }
 
 function uid_slug_random_strict($length = 8) {
-    $lower = 'abcdefghijklmnopqrstuvwxyz';
+    $pool = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
     if ($length < 1) {
         $length = 1;
@@ -24,7 +24,7 @@ function uid_slug_random_strict($length = 8) {
 
     $chars = [];
     for ($i = 0; $i < $length; $i++) {
-        $chars[] = $lower[random_int(0, strlen($lower) - 1)];
+        $chars[] = $pool[random_int(0, strlen($pool) - 1)];
     }
 
     return implode('', $chars);
